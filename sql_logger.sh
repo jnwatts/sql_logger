@@ -10,6 +10,20 @@ USER="${USER}"
 #SUBSET=""
 DATE="$(date +%D)"
 
+if [ "${#}" -lt 1 ]; then
+    echo "Usage: ${0} <options>" >&2
+    echo "  --verbose|-v    Print output to screen and to output file" >&2
+    echo "  --input|-i      File to read from, or \"-\" for stdin (default: \"${INPUT}\")" >&2
+    echo "  --output|-o     File to write to, or \"-\" for stdout (default: \"${OUTPUT}\")" >&2
+    echo "  --title|-t      Title to be output (default: \"${TITLE}\")" >&2
+    echo "  --author|-a     Author to be output (default: \"${AUTHOR}\")" >&2
+    echo "  --user|-u       User to be output and used with psql (default: \"${USER}\")" >&2
+    #echo "  --subset|-s     Subset of SQL commands to execute, separated by commas, or leave empty to execute all: E.G. 1,2,5 (default: \"${SUBSET}\")" >&2
+    echo ""
+    echo "  Example: ./sql_logger -i homework3.sql -o homework3_output.txt -a \"Joe Student\" -t \"Homework #3\"" >&2
+    exit 1
+fi
+
 # Read arguments
 OPTS=`getopt -o vi:o:t:a:u:s: -l verbose,input:,output:,title:,author:,user:,subset: -- "$@"`
 if [ $? != 0 ]

@@ -23,7 +23,6 @@ while true ; do
         --output|-o) OUTPUT="${2}"; shift 2;;
         --title|-t) TITLE="${2}"; shift 2;;
         --author|-a) AUTHOR="${2}"; shift 2;;
-        --subset|-s) SUBSET="${2}"; shift 2;;
         #--subset|-s) SUBSET="${2}"; shift 2;;
         --) shift; break;;
     esac

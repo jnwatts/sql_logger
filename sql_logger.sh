@@ -5,7 +5,7 @@ VERBOSE=0
 INPUT="-"
 OUTPUT="-"
 TITLE="Homework"
-AUTHOR="Student name"
+AUTHOR=""
 #SUBSET=""
 DATE="$(date +%D)"
 

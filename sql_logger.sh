@@ -6,11 +6,12 @@ INPUT="-"
 OUTPUT="-"
 TITLE="Homework"
 AUTHOR=""
+USER="${USER}"
 #SUBSET=""
 DATE="$(date +%D)"
 
 # Read arguments
-OPTS=`getopt -o vi:o:u:t:a:s: -l verbose,input:,output:,title:,author:,subset: -- "$@"`
+OPTS=`getopt -o vi:o:t:a:u:s: -l verbose,input:,output:,title:,author:,user:,subset: -- "$@"`
 if [ $? != 0 ]
 then
     exit 1
@@ -23,6 +24,7 @@ while true ; do
         --output|-o) OUTPUT="${2}"; shift 2;;
         --title|-t) TITLE="${2}"; shift 2;;
         --author|-a) AUTHOR="${2}"; shift 2;;
+        --user|-u) USER="${2}"; shift 2;;
         #--subset|-s) SUBSET="${2}"; shift 2;;
         --) shift; break;;
     esac
@@ -57,6 +59,8 @@ output() {
     fi
     cat >&${OUTFD}
 }
+
+export PGUSER="${USER}"
 
 echo "${TITLE}" | output
 echo "${DATE}" | output

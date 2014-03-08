@@ -18,7 +18,7 @@ fi
 eval set -- "$OPTS"
 while true ; do
     case "$1" in
-		--verbose|-v) VERBOSE=1; shift;;
+        --verbose|-v) VERBOSE=1; shift;;
         --input|-i) INPUT="${2}"; shift 2;;
         --output|-o) OUTPUT="${2}"; shift 2;;
         --title|-t) TITLE="${2}"; shift 2;;

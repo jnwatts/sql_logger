@@ -109,6 +109,8 @@ while read line <&${INFD}; do
     if echo "${line}" | grep -q -e "^--IGNORE_ERRORS [01]"; then
         ignore_errors="$(echo "${line}" | sed -e 's/.*IGNORE_ERRORS \([01]\).*/\1/')"
         continue
+    elif echo "${line}" | grep -q -e "^--EXIT"; then
+        exit
     fi
     sql="${sql}${NL}${line}"
     if echo "${line}" | grep -q "DELIMITER"; then

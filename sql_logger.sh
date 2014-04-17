@@ -118,7 +118,12 @@ while read line <&${INFD}; do
     elif echo "${line}" | grep -q "${delimiter}"; then
         echo "${sql}" | output
         if [ "${PSQL}" -eq 1 ]; then
-            echo "${sql}" | psql -v ON_ERROR_STOP=${ignore_errors} 2>&1 || exit $?
+            if [ ${ignore_errors} -eq 0 ]; then
+                echo "${sql}" | psql -v ON_ERROR_STOP=1 2>&1 || exit $?
+            else
+                echo "${sql}" | psql 2>&1
+            fi
+            echo ${on_error_stop}
         elif [ "${MYSQL}" -eq 1 ]; then
             echo "${sql}" | mysql -D "${DATABASE}" \
                 --table \

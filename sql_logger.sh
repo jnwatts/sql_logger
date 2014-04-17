@@ -5,16 +5,31 @@ VERBOSE=0
 INPUT="-"
 OUTPUT="-"
 TITLE="Homework"
-AUTHOR="Student name"
-SUBSET=""
+AUTHOR=""
+USER="${USER}"
+#SUBSET=""
 DATE="$(date +%D)"
 CLIENT="psql"
 DATABASE=""
 MYSQL=0
 PSQL=0
 
+if [ "${#}" -lt 1 ]; then
+    echo "Usage: ${0} <options>" >&2
+    echo "  --verbose|-v    Print output to screen and to output file" >&2
+    echo "  --input|-i      File to read from, or \"-\" for stdin (default: \"${INPUT}\")" >&2
+    echo "  --output|-o     File to write to, or \"-\" for stdout (default: \"${OUTPUT}\")" >&2
+    echo "  --title|-t      Title to be output (default: \"${TITLE}\")" >&2
+    echo "  --author|-a     Author to be output (default: \"${AUTHOR}\")" >&2
+    echo "  --user|-u       User to be output and used with psql (default: \"${USER}\")" >&2
+    #echo "  --subset|-s     Subset of SQL commands to execute, separated by commas, or leave empty to execute all: E.G. 1,2,5 (default: \"${SUBSET}\")" >&2
+    echo ""
+    echo "  Example: ./sql_logger -i homework3.sql -o homework3_output.txt -a \"Joe Student\" -t \"Homework #3\"" >&2
+    exit 1
+fi
+
 # Read arguments
-OPTS=`getopt -o vi:o:u:t:a:s:mpD: -l verbose,input:,output:,title:,author:,subset:,mysql,psql,database: -- "$@"`
+OPTS=`getopt -o vi:o:u:t:a:u:s:mpD: -l verbose,input:,output:,title:,author:,user:,subset:,mysql,psql,database: -- "$@"`
 if [ $? != 0 ]
 then
     exit 1
@@ -27,7 +42,8 @@ while true ; do
         --output|-o) OUTPUT="${2}"; shift 2;;
         --title|-t) TITLE="${2}"; shift 2;;
         --author|-a) AUTHOR="${2}"; shift 2;;
-        --subset|-s) SUBSET="${2}"; shift 2;;
+        --user|-u) USER="${2}"; shift 2;;
+        #--subset|-s) SUBSET="${2}"; shift 2;;
         --mysql|-m) MYSQL=1; PSQL=0; shift;;
         --psql|-p) PSQL=1; MYSQL=0; shift;;
         --database|-D) DATABASE="${2}"; shift 2;;
@@ -36,14 +52,14 @@ while true ; do
 done
 
 if [ ${PSQL} -eq 1 ]; then
-    if [ ! -e "${HOME}/.pgpass" ]; then
-        echo "${HOME}/.pgpass is missing! Without it, you would need to enter your password for each question." >&2
-        echo "You really should create it with the following contents:" >&2
-        echo "*:*:${USER}:your_postgres_password" >&2
-        echo "And then change its permissions to appease postgres:" >&2
-        echo "chmod 0600 ${HOME}/.pgpass" >&2
-        exit 1
-    fi
+	if [ ! -e "${HOME}/.pgpass" ]; then
+		echo "${HOME}/.pgpass is missing! Without it, you would need to enter your password for each question." >&2
+		echo "You really should create it with the following contents:" >&2
+		echo "*:*:${USER}:your_postgres_password" >&2
+		echo "And then change its permissions to appease postgres:" >&2
+		echo "chmod 0600 ${HOME}/.pgpass" >&2
+		exit 1
+	fi
 elif [ ${MYSQL} -eq 1 ]; then
     if [ ! -e "${HOME}/.my.cnf" ]; then
         echo "${HOME}/.my.cnf is missing! Without it, you would need to enter your password for each question." >&2
@@ -76,6 +92,7 @@ output() {
     fi
     cat >&${OUTFD}
 }
+export PGUSER="${USER}"
 
 echo "${TITLE}" | output
 echo "${DATE}" | output

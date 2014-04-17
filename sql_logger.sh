@@ -119,9 +119,9 @@ while read line <&${INFD}; do
         echo "${sql}" | output
         if [ "${PSQL}" -eq 1 ]; then
             if [ ${ignore_errors} -eq 0 ]; then
-                echo "${sql}" | psql -v ON_ERROR_STOP=1 2>&1 || exit $?
+                echo "${sql}" | psql -v ON_ERROR_STOP=1 1>&${OUTFD} 2>&1 || exit $?
             else
-                echo "${sql}" | psql 2>&1
+                echo "${sql}" | psql 1>&${OUTFD} 2>&1
             fi
             echo ${on_error_stop}
         elif [ "${MYSQL}" -eq 1 ]; then

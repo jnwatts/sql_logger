@@ -120,7 +120,7 @@ while read line <&${INFD}; do
         elif [ "${MYSQL}" -eq 1 ]; then
             echo "${sql}" | mysql -D "${DATABASE}" \
                 --table \
-                --init-command='set sql_mode="ANSI_QUOTES"' *>&${OUTFD} \
+                --init-command='set sql_mode="ANSI_QUOTES"' 1>&${OUTFD} 2>&1 \
                 || [ ${ignore_errors} -eq 1 ] || exit $?
         fi
         sql=""

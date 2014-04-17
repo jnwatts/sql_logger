@@ -113,9 +113,18 @@ while read line <&${INFD}; do
         exit
     fi
     sql="${sql}${NL}${line}"
-    if echo "${line}" | grep -q "DELIMITER"; then
-        delimiter="$(echo "${line}" | sed -e"s/DELIMITER //")"
-    elif echo "${line}" | grep -q "${delimiter}"; then
+    if [ "${PSQL}" -eq 1 ]; then
+        if echo "${line}" | grep -q 'AS \$\$'; then
+            delimiter='\$\$'
+            continue;
+        fi
+    elif [ "${MYSQL}" -eq 1 ]; then
+        if echo "${line}" | grep -q "DELIMITER"; then
+            delimiter="$(echo "${line}" | sed -e"s/DELIMITER //")"
+            continue;
+        fi
+    fi
+    if echo "${line}" | grep -q "${delimiter}"; then
         echo "${sql}" | output
         if [ "${PSQL}" -eq 1 ]; then
             if [ ${ignore_errors} -eq 0 ]; then
@@ -123,7 +132,7 @@ while read line <&${INFD}; do
             else
                 echo "${sql}" | psql 1>&${OUTFD} 2>&1
             fi
-            echo ${on_error_stop}
+            delimiter=";"
         elif [ "${MYSQL}" -eq 1 ]; then
             echo "${sql}" | mysql -D "${DATABASE}" \
                 --table \
